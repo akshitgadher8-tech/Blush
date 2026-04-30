@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Blush Beauty Parlour | Premium 3D Experience</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Quattrocento+Sans:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --rose:#B5566A;
+      --gold:#C9956A;
+      --blush:#F0C4C4;
+      --cream:#FDF6F0;
+      --deep:#160C14;
+      --wine:#6B1F3A;
+      --mauve:#8C4466;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:'Quattrocento Sans',sans-serif;
+      background:var(--deep);
+      color:var(--cream);
+      overflow-x:hidden;
+      cursor:none;
+    }
+    body.locked{overflow:hidden}
+    a{text-decoration:none}
+
+    #cv{
+      position:fixed;
+      inset:0;
+      z-index:5;
+      pointer-events:none;
+    }
+    #cv canvas{
+      display:block;
+      width:100%!important;
+      height:100%!important;
+    }
+
+    .page-overlay{
+      position:fixed;
+      inset:0;
+      z-index:6;
+      pointer-events:none;
+      opacity:0;
+      background:
+        radial-gradient(circle at 50% 30%, rgba(255,255,255,.05), transparent 30%),
+        linear-gradient(135deg, rgba(22,12,20,.28), rgba(22,12,20,.74));
+      transition:opacity 1s;
+    }
+
+    body::after{
+      content:'';
+      position:fixed;
+      inset:0;
+      z-index:7;
+      pointer-events:none;
+      opacity:.25;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+    }
+
+    #cur,#curR{
+      position:fixed;
+      top:0;left:0;
+      transform:translate(-50%,-50%);
+      pointer-events:none;
+      z-index:9999;
+    }
+    #cur{
+      width:8px;height:8px;
+      border-radius:50%;
+      background:var(--gold);
+      mix-blend-mode:screen;
+    }
+    #curR{
+      width:34px;height:34px;
+      border-radius:50%;
+      border:1px solid rgba(201,149,106,.5);
+      transition:left .09s linear, top .09s linear;
+      z-index:9998;
+    }
+
+    /* ENTRY */
+    #hero-entry{
+      position:fixed;
+      inset:0;
+      z-index:50;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      background:transparent;
+      transition:opacity .7s ease;
+    }
+    #hero-entry::before{
+      content:'';
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(201,149,106,.08), transparent 24%),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.03), transparent 40%),
+        linear-gradient(to bottom, rgba(22,12,20,.18), rgba(22,12,20,.82));
+      z-index:0;
+    }
+    #hero-entry > *{
+      position:relative;
+      z-index:2;
+    }
+    .entry-title{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(3.6rem,11vw,7rem);
+      letter-spacing:.12em;
+      line-height:1;
+      background:linear-gradient(135deg,var(--gold),#ebb5a0,var(--rose));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      text-shadow:0 0 30px rgba(201,149,106,.12);
+    }
+    .entry-sub{
+      margin-top:1rem;
+      font-size:clamp(.72rem,1.6vw,.92rem);
+      letter-spacing:.55em;
+      text-transform:uppercase;
+      color:rgba(253,246,240,.72);
+    }
+    #start-btn{
+      margin-top:min(38vh,310px);
+      padding:1rem 3.4rem;
+      border-radius:999px;
+      border:1px solid rgba(201,149,106,.4);
+      background:rgba(201,149,106,.08);
+      color:var(--gold);
+      font-family:'Playfair Display',serif;
+      font-size:1.25rem;
+      font-style:italic;
+      letter-spacing:.12em;
+      cursor:pointer;
+      backdrop-filter:blur(10px);
+      transition:.35s ease;
+    }
+    #start-btn:hover{
+      transform:translateY(-2px) scale(1.04);
+      background:var(--gold);
+      color:var(--deep);
+      box-shadow:0 0 36px rgba(201,149,106,.42);
+    }
+
+    /* MAIN */
+    #main-wrap{
+      display:none;
+      opacity:0;
+      position:relative;
+      z-index:20;
+    }
+
+    nav{
+      position:fixed;
+      top:0;left:0;right:0;
+      z-index:100;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:1.2rem 2.5rem;
+      background:linear-gradient(to bottom, rgba(22,12,20,.96), rgba(22,12,20,.76), transparent);
+      backdrop-filter:blur(8px);
+    }
+    .logo-wrap{display:flex;flex-direction:column;line-height:1.15}
+    .logo-main{
+      font-family:'Playfair Display',serif;
+      font-size:2rem;
+      font-weight:700;
+      color:var(--gold);
+      letter-spacing:.06em;
+    }
+    .logo-sub{
+      font-size:.58rem;
+      letter-spacing:.45em;
+      color:rgba(201,149,106,.65);
+      text-transform:uppercase;
+      margin-top:2px;
+    }
+    nav ul{
+      display:flex;
+      gap:2.4rem;
+      list-style:none;
+    }
+    nav ul a{
+      color:rgba(253,246,240,.8);
+      font-size:.7rem;
+      letter-spacing:.28em;
+      text-transform:uppercase;
+      transition:.3s;
+    }
+    nav ul a:hover{color:var(--gold)}
+    .nav-book{
+      padding:.6rem 1.5rem;
+      border:1px solid rgba(201,149,106,.5);
+      color:var(--gold);
+      font-size:.68rem;
+      letter-spacing:.28em;
+      text-transform:uppercase;
+      border-radius:2px;
+      transition:.3s;
+      white-space:nowrap;
+    }
+    .nav-book:hover{
+      background:var(--gold);
+      color:var(--deep);
+    }
+
+    .ham{
+      display:none;
+      flex-direction:column;
+      gap:5px;
+      padding:6px;
+      cursor:pointer;
+      z-index:160;
+    }
+    .ham span{
+      width:22px;
+      height:1.5px;
+      background:var(--gold);
+      border-radius:3px;
+      display:block;
+      transition:.3s;
+    }
+    .ham.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+    .ham.open span:nth-child(2){opacity:0}
+    .ham.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+    .mob-menu{
+      display:none;
+      position:fixed;
+      inset:0;
+      z-index:150;
+      background:rgba(22,12,20,.98);
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:2rem;
+    }
+    .mob-menu.open{display:flex}
+    .mob-menu a{
+      color:rgba(253,246,240,.86);
+      font-family:'Playfair Display',serif;
+      font-size:2rem;
+      font-style:italic;
+    }
+    .mob-menu a:hover{color:var(--gold)}
+
+    .site-content{position:relative;z-index:30}
+    #home{
+      min-height:100dvh;
+      display:flex;
+      align-items:center;
+      padding:8rem 3rem 6rem;
+    }
+    .hero-content{
+      max-width:590px;
+      animation:fadeUp 1s cubic-bezier(.16,1,.3,1) both;
+    }
+    .season-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:2rem;
+    }
+    .season-line{width:36px;height:1px;background:var(--rose)}
+    .season-text{
+      font-size:.62rem;
+      letter-spacing:.45em;
+      text-transform:uppercase;
+      color:var(--rose);
+    }
+    .hero-title{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(3rem,11vw,8rem);
+      line-height:.93;
+      margin-bottom:1.6rem;
+      text-shadow:0 2px 30px rgba(0,0,0,.6);
+    }
+    .hero-title .t1{display:block;color:#fff}
+    .hero-title .t2{display:block;color:var(--gold);font-style:italic}
+    .hero-title .t3{
+      display:block;
+      color:transparent;
+      -webkit-text-stroke:1px rgba(253,246,240,.3);
+    }
+    .hero-sub{
+      max-width:410px;
+      color:rgba(253,246,240,.76);
+      line-height:1.85;
+      margin-bottom:2rem;
+      text-shadow:0 1px 8px rgba(0,0,0,.45);
+    }
+
+    .offer-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:14px;
+      padding:.9rem 1.7rem;
+      margin-bottom:2.3rem;
+      border:1px solid rgba(181,86,106,.5);
+      border-radius:4px;
+      background:linear-gradient(135deg,rgba(181,86,106,.25),rgba(107,31,58,.3));
+      backdrop-filter:blur(6px);
+      transition:.3s;
+    }
+    .offer-pill:hover{
+      transform:translateY(-2px);
+      border-color:var(--rose);
+      background:linear-gradient(135deg,rgba(181,86,106,.38),rgba(107,31,58,.52));
+    }
+    .offer-price{
+      font-family:'Playfair Display',serif;
+      font-size:2.2rem;
+      font-weight:700;
+      color:var(--gold);
+      line-height:1;
+    }
+    .offer-detail{display:flex;flex-direction:column;gap:3px}
+    .offer-main{
+      color:#fff;
+      font-size:.75rem;
+      font-weight:700;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+    }
+    .offer-free{font-size:.7rem;color:var(--blush)}
+    .offer-tap{
+      font-size:.6rem;
+      color:rgba(201,149,106,.6);
+      letter-spacing:.15em;
+      text-transform:uppercase;
+    }
+
+    .hero-btns{
+      display:flex;
+      gap:1.2rem;
+      flex-wrap:wrap;
+    }
+    .btn-primary{
+      display:inline-block;
+      padding:.95rem 2.8rem;
+      background:linear-gradient(135deg,var(--wine),var(--rose));
+      color:#fff;
+      font-size:.72rem;
+      font-weight:700;
+      letter-spacing:.28em;
+      text-transform:uppercase;
+      border:none;
+      border-radius:2px;
+      box-shadow:0 8px 35px rgba(181,86,106,.45);
+      transition:.35s;
+    }
+    .btn-primary:hover{
+      transform:translateY(-3px);
+      box-shadow:0 14px 50px rgba(181,86,106,.6);
+    }
+    .btn-ghost{
+      display:inline-block;
+      padding:.95rem 2.4rem;
+      background:transparent;
+      color:rgba(253,246,240,.82);
+      border:1px solid rgba(253,246,240,.3);
+      border-radius:2px;
+      font-size:.72rem;
+      letter-spacing:.28em;
+      text-transform:uppercase;
+      transition:.3s;
+    }
+    .btn-ghost:hover{
+      border-color:var(--gold);
+      color:var(--gold);
+    }
+
+    .sec-shell{
+      padding:6rem 3rem;
+      background:rgba(22,12,20,.88);
+      backdrop-filter:blur(12px);
+      border-top:1px solid rgba(181,86,106,.15);
+    }
+    .sec-inner{max-width:1160px;margin:0 auto}
+    .sec-tag{
+      font-size:.6rem;
+      letter-spacing:.48em;
+      text-transform:uppercase;
+      color:var(--rose);
+      margin-bottom:.7rem;
+    }
+    .sec-title{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(1.9rem,4.5vw,3.2rem);
+      color:#fff;
+      margin-bottom:.6rem;
+      line-height:1.15;
+    }
+    .sec-title em{color:var(--gold);font-style:italic}
+    .sec-lead{
+      max-width:55ch;
+      font-size:1rem;
+      line-height:1.8;
+      color:rgba(253,246,240,.65);
+      margin-bottom:3rem;
+    }
+
+    .svc-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:1px;
+      background:rgba(255,255,255,.06);
+    }
+    .svc-card{
+      background:rgba(22,12,20,.96);
+      padding:2.4rem 2rem;
+      position:relative;
+      overflow:hidden;
+      transition:.35s;
+    }
+    .svc-card::before{
+      content:'';
+      position:absolute;
+      inset:0;
+      background:linear-gradient(135deg,rgba(181,86,106,.12),transparent);
+      opacity:0;
+      transition:.35s;
+    }
+    .svc-card:hover{
+      background:rgba(40,16,32,.98);
+    }
+    .svc-card:hover::before{opacity:1}
+    .svc-card::after{
+      content:'';
+      position:absolute;
+      left:0;bottom:0;
+      width:0;height:1px;
+      background:linear-gradient(to right,var(--rose),var(--gold));
+      transition:.45s;
+    }
+    .svc-card:hover::after{width:100%}
+    .svc-icon{font-size:1.8rem;display:block;margin-bottom:1rem}
+    .svc-name{
+      font-family:'Playfair Display',serif;
+      font-size:1.2rem;
+      color:#fff;
+      margin-bottom:.55rem;
+    }
+    .svc-desc{
+      font-size:.85rem;
+      line-height:1.75;
+      color:rgba(253,246,240,.62);
+    }
+    .svc-price{
+      margin-top:1.4rem;
+      color:var(--gold);
+      font-size:.72rem;
+      font-weight:700;
+      letter-spacing:.22em;
+      text-transform:uppercase;
+    }
+
+    .addr-strip{
+      padding:1.4rem 3rem;
+      background:rgba(107,31,58,.18);
+      border-top:1px solid rgba(181,86,106,.2);
+      border-bottom:1px solid rgba(181,86,106,.2);
+    }
+    .addr-inner{
+      max-width:1160px;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:1.2rem;
+      flex-wrap:wrap;
+      text-align:center;
+    }
+    .addr-icon{font-size:1.2rem}
+    .addr-text{
+      font-size:.82rem;
+      line-height:1.7;
+      color:rgba(253,246,240,.68);
+    }
+    .addr-text strong{
+      color:var(--gold);
+      font-size:.82rem;
+      letter-spacing:.06em;
+    }
+    .addr-divider{
+      width:1px;height:28px;
+      background:rgba(181,86,106,.3);
+    }
+
+    .offer-banner-wrap{
+      position:relative;
+      overflow:hidden;
+      padding:4rem 3rem;
+      background:linear-gradient(135deg,rgba(107,31,58,.65),rgba(140,68,102,.45),rgba(201,149,106,.12));
+      border-top:1px solid rgba(181,86,106,.3);
+      border-bottom:1px solid rgba(181,86,106,.3);
+    }
+    .offer-banner-wrap::before{
+      content:'';
+      position:absolute;
+      inset:0;
+      background:radial-gradient(ellipse at 75% 50%,rgba(201,149,106,.14),transparent 65%);
+    }
+    .offer-inner{
+      position:relative;
+      max-width:1160px;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      gap:4rem;
+      flex-wrap:wrap;
+    }
+    .offer-season{
+      font-size:.62rem;
+      letter-spacing:.45em;
+      text-transform:uppercase;
+      color:var(--rose);
+      margin-bottom:.5rem;
+    }
+    .offer-headline{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(2rem,4.5vw,3.2rem);
+      line-height:1.1;
+      color:#fff;
+    }
+    .offer-headline em{color:var(--gold);font-style:italic}
+    .offer-items{
+      flex:1;
+      min-width:220px;
+      display:flex;
+      flex-direction:column;
+      gap:1rem;
+    }
+    .offer-item{
+      display:flex;
+      gap:.8rem;
+      align-items:flex-start;
+    }
+    .offer-dot{
+      width:6px;height:6px;
+      border-radius:50%;
+      background:var(--gold);
+      margin-top:6px;
+      flex-shrink:0;
+    }
+    .offer-item-text{
+      color:rgba(253,246,240,.85);
+      line-height:1.55;
+      font-size:.92rem;
+    }
+    .offer-item-text strong{color:var(--gold)}
+    .offer-cta-wrap{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:.8rem;
+    }
+    .offer-only{
+      font-size:.6rem;
+      letter-spacing:.4em;
+      text-transform:uppercase;
+      color:rgba(253,246,240,.5);
+    }
+    .offer-num{
+      font-family:'Playfair Display',serif;
+      font-size:5.5rem;
+      line-height:1;
+      color:var(--gold);
+    }
+
+    .about-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:3rem;
+      align-items:start;
+    }
+    .about-text p{
+      font-size:.95rem;
+      line-height:1.85;
+      color:rgba(253,246,240,.72);
+      margin-bottom:1.2rem;
+    }
+    .about-text strong{color:var(--gold)}
+    .stats-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:1px;
+      background:rgba(181,86,106,.2);
+    }
+    .stat-box{
+      background:rgba(22,12,20,.9);
+      padding:2.5rem 2rem;
+      text-align:center;
+    }
+    .stat-num{
+      font-family:'Playfair Display',serif;
+      font-size:3.5rem;
+      color:var(--gold);
+      line-height:1;
+    }
+    .stat-num sup{font-size:1.5rem}
+    .stat-lbl{
+      margin-top:.5rem;
+      font-size:.62rem;
+      letter-spacing:.32em;
+      text-transform:uppercase;
+      color:rgba(253,246,240,.45);
+    }
+    .stat-sub{
+      margin-top:.4rem;
+      font-size:.8rem;
+      line-height:1.5;
+      color:rgba(253,246,240,.55);
+    }
+
+    .contact-card{
+      max-width:560px;
+      margin:0 auto;
+      padding:4rem 2rem;
+      text-align:center;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+    .contact-avatar{
+      width:88px;height:88px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:linear-gradient(135deg,var(--wine),var(--mauve));
+      border:2px solid rgba(201,149,106,.4);
+      box-shadow:0 0 30px rgba(181,86,106,.3);
+      font-family:'Playfair Display',serif;
+      font-size:2rem;
+      color:#fff;
+      font-style:italic;
+      margin-bottom:1.5rem;
+    }
+    .contact-name{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(1.6rem,4vw,2.4rem);
+      color:#fff;
+      font-style:italic;
+      margin-bottom:.5rem;
+    }
+    .contact-role{
+      margin-bottom:2rem;
+      font-size:.62rem;
+      letter-spacing:.45em;
+      text-transform:uppercase;
+      color:var(--rose);
+    }
+    .contact-phone,
+    .contact-wa{
+      display:inline-flex;
+      align-items:center;
+      gap:.9rem;
+      border-radius:3px;
+      transition:.3s;
+      backdrop-filter:blur(6px);
+      margin-bottom:1rem;
+    }
+    .contact-phone{
+      padding:1.1rem 2.5rem;
+      border:1px solid rgba(201,149,106,.4);
+      background:rgba(201,149,106,.06);
+      color:var(--gold);
+      font-family:'Playfair Display',serif;
+      font-size:clamp(1.3rem,3.5vw,2rem);
+    }
+    .contact-phone:hover{
+      background:rgba(201,149,106,.14);
+      border-color:var(--gold);
+    }
+    .contact-wa{
+      padding:1rem 2.2rem;
+      border:1px solid rgba(37,211,102,.35);
+      background:rgba(37,211,102,.06);
+      color:#25D366;
+      font-family:'Playfair Display',serif;
+      font-size:clamp(1rem,2.5vw,1.4rem);
+    }
+    .contact-wa:hover{
+      background:rgba(37,211,102,.14);
+      border-color:#25D366;
+    }
+    .contact-addr{
+      max-width:390px;
+      margin-top:1.2rem;
+      display:flex;
+      align-items:flex-start;
+      gap:.6rem;
+      padding:1rem 1.4rem;
+      border-radius:4px;
+      border:1px solid rgba(181,86,106,.25);
+      background:rgba(181,86,106,.1);
+      text-align:left;
+      color:rgba(253,246,240,.65);
+      line-height:1.75;
+      cursor:pointer;
+    }
+    .contact-addr strong{
+      display:block;
+      color:var(--gold);
+      font-size:.72rem;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      margin-bottom:.3rem;
+    }
+    .contact-badges{
+      display:flex;
+      gap:.8rem;
+      flex-wrap:wrap;
+      justify-content:center;
+      margin-top:1.5rem;
+    }
+    .badge{
+      padding:.45rem 1.1rem;
+      border:1px solid rgba(181,86,106,.3);
+      border-radius:999px;
+      background:rgba(181,86,106,.07);
+      color:rgba(253,246,240,.6);
+      font-size:.68rem;
+      letter-spacing:.15em;
+      text-transform:uppercase;
+    }
+
+    footer{
+      padding:2.5rem 3rem;
+      border-top:1px solid rgba(255,255,255,.06);
+      background:rgba(22,12,20,.97);
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:1.5rem;
+      flex-wrap:wrap;
+    }
+    .foot-brand{display:flex;flex-direction:column;gap:.5rem}
+    .foot-logo{
+      font-family:'Playfair Display',serif;
+      font-size:1.35rem;
+      color:var(--gold);
+      font-style:italic;
+      font-weight:700;
+      letter-spacing:.1em;
+    }
+    .foot-addr{
+      font-size:.68rem;
+      line-height:1.7;
+      color:rgba(253,246,240,.35);
+      max-width:260px;
+    }
+    .foot-links{
+      display:flex;
+      align-items:center;
+      gap:2rem;
+    }
+    .foot-links a{
+      font-size:.62rem;
+      letter-spacing:.25em;
+      text-transform:uppercase;
+      color:rgba(253,246,240,.35);
+      transition:.3s;
+    }
+    .foot-links a:hover{color:var(--gold)}
+    .foot-wa{color:#25D366!important}
+    .foot-copy{
+      font-size:.62rem;
+      color:rgba(253,246,240,.2);
+      letter-spacing:.06em;
+      align-self:flex-end;
+    }
+
+    @keyframes fadeUp{
+      from{opacity:0;transform:translateY(36px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+
+    @media (max-width:900px){
+      .svc-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:700px){
+      .about-grid{grid-template-columns:1fr}
+    }
+    @media (max-width:600px){
+      .svc-grid{grid-template-columns:1fr}
+      .addr-divider{display:none}
+    }
+    @media (max-width:767px){
+      body{cursor:auto}
+      #cur,#curR{display:none}
+      nav{padding:1rem 1.4rem}
+      .logo-main{font-size:1.55rem}
+      .ham{display:flex}
+      nav ul,.nav-book{display:none!important}
+      #home{padding:6rem 1.5rem 4.5rem}
+      .sec-shell{padding:4.5rem 1.5rem}
+      .offer-banner-wrap{padding:3rem 1.5rem}
+      .offer-inner{gap:2rem}
+      .addr-strip{padding:1.2rem 1.5rem}
+      footer{padding:2rem 1.5rem;flex-direction:column;align-items:flex-start}
+      .foot-links{gap:1.2rem}
+      #start-btn{margin-top:32vh}
+    }
+  </style>
+</head>
+<body class="locked">
+  <div id="cv"><canvas id="c"></canvas></div>
+  <div class="page-overlay" id="pageOverlay"></div>
+
+  <div id="cur"></div>
+  <div id="curR"></div>
+
+  <div id="hero-entry">
+    <h1 class="entry-title" id="entryTitle">BLUSH</h1>
+    <div class="entry-sub" id="entrySub">Beauty Parlour</div>
+    <button id="start-btn">✦ Enter Parlour ✦</button>
+  </div>
+
+  <div id="main-wrap">
+    <div class="mob-menu" id="mob">
+      <a href="#services" onclick="cM()">Services</a>
+      <a href="#offer" onclick="cM()">Offer</a>
+      <a href="#about" onclick="cM()">About</a>
+      <a href="#contact" onclick="cM()">Contact</a>
+    </div>
+
+    <nav>
+      <div class="logo-wrap">
+        <span class="logo-main">Blush</span>
+        <span class="logo-sub">Beauty Parlour</span>
+      </div>
+      <div class="ham" id="ham" onclick="tM()"><span></span><span></span><span></span></div>
+      <ul>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#offer">Offer</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a href="tel:+919998713193" class="nav-book">Book Now</a>
+    </nav>
+
+    <div class="site-content">
+      <section id="home">
+        <div class="hero-content">
+          <div class="season-badge">
+            <div class="season-line"></div>
+            <span class="season-text">For Women · By Women</span>
+            <div class="season-line"></div>
+          </div>
+
+          <h1 class="hero-title">
+            <span class="t1">New Season,</span>
+            <span class="t2">New You!</span>
+            <span class="t3">Blush</span>
+          </h1>
+
+          <p class="hero-sub">
+            Book your appointment and step into a world of luxury beauty — crafted exclusively for the modern woman.
+          </p>
+
+          <a href="#offer" class="offer-pill">
+            <div class="offer-price">₹759</div>
+            <div class="offer-detail">
+              <span class="offer-main">Special Offers</span>
+              <span class="offer-free">✦ Packages from ₹759</span>
+              <span class="offer-tap">Tap to see full offer ↓</span>
+            </div>
+          </a>
+
+          <div class="hero-btns">
+            <a href="tel:+919998713193" class="btn-primary">Book Now</a>
+            <a href="#services" class="btn-ghost">Explore Services</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="services" class="sec-shell">
+        <div class="sec-inner">
+          <p class="sec-tag">Our Treatments</p>
+          <h2 class="sec-title">Curated <em>Services</em></h2>
+          <p class="sec-lead">
+            Every service is performed with precision, care, and premium products — because you deserve nothing less.
+          </p>
+
+          <div class="svc-grid">
+            <div class="svc-card">
+              <span class="svc-icon">✨</span>
+              <div class="svc-name">Facial</div>
+              <div class="svc-desc">Glow-boosting facial care designed to refresh tired skin, improve softness, and leave your face looking clean, bright, and fresh after every visit.</div>
+              <div class="svc-price">₹399</div>
+            </div>
+
+            <div class="svc-card">
+              <span class="svc-icon">🌿</span>
+              <div class="svc-name">Waxing</div>
+              <div class="svc-desc">Face wax, hand wax, under arms, and full leg waxing for smooth, clean skin from head to toe. A complete waxing experience with gentle finish.</div>
+              <div class="svc-price">₹499</div>
+            </div>
+
+            <div class="svc-card">
+              <span class="svc-icon">💇‍♀️</span>
+              <div class="svc-name">Hair Cut, Color &amp; Blow Dry</div>
+              <div class="svc-desc">Hair cut, hair color, hair ironing, and professional blow dry styling to give you a fresh, neat, and party-ready look every time.</div>
+              <div class="svc-price">₹499</div>
+            </div>
+
+            <div class="svc-card">
+              <span class="svc-icon">🌸</span>
+              <div class="svc-name">Hair Treatment</div>
+              <div class="svc-desc">Professional hair care including keratin, botox, smoothing, and spa treatments to reduce frizz, improve softness, and bring back shine and strength.</div>
+              <div class="svc-price">Keratin · Botox · Smoothing · Spa</div>
+            </div>
+
+            <div class="svc-card">
+              <span class="svc-icon">🧴</span>
+              <div class="svc-name">Skin Therapy</div>
+              <div class="svc-desc">Clean-up treatment to deeply cleanse, refresh the skin, and restore a smooth natural glow. Ideal for regular skin care and instant freshness all year round.</div>
+              <div class="svc-price">₹199</div>
+            </div>
+
+            <div class="svc-card">
+              <span class="svc-icon">💆‍♀️</span>
+              <div class="svc-name">Wellness Ritual</div>
+              <div class="svc-desc">Head massage and full body massage designed to relax the body, reduce stress, and leave you feeling calm, refreshed, and fully recharged.</div>
+              <div class="svc-price">₹599</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="addr-strip">
+        <div class="addr-inner">
+          <span class="addr-icon">📍</span>
+          <div class="addr-text">
+            <strong>Visit Us</strong><br />
+            D-612, RangSkyCity, Tavra Road, Tavra, Bharuch, Gujarat
+          </div>
+          <div class="addr-divider"></div>
+          <a
+            href="https://www.google.com/maps/search/?api=1&query=D-612,+RangSkyCity,+Tavra+Road,+Tavra,+Bharuch,+Gujarat"
+            target="_blank"
+            rel="noopener"
+            style="color:var(--gold);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;"
+          >Get Directions →</a>
+        </div>
+      </div>
+
+      <section id="offer">
+        <div class="offer-banner-wrap">
+          <div class="offer-inner">
+            <div class="offer-big">
+              <p class="offer-season">Special Offers · Limited Time</p>
+              <h2 class="offer-headline">Beauty <br /><em>Offers</em></h2>
+            </div>
+
+            <div class="offer-items">
+              <div class="offer-item">
+                <div class="offer-dot"></div>
+                <span class="offer-item-text"><strong>Offer 1 — ₹759</strong><br />Facial + Full Waxing (Face, Hands, Under Arms &amp; Full Leg) for a fresh and polished beauty combo.</span>
+              </div>
+
+              <div class="offer-item">
+                <div class="offer-dot"></div>
+                <span class="offer-item-text"><strong>Offer 2 — ₹1249</strong><br />Includes Facial + Waxing + Hair Cut, Color &amp; Blow Dry + Wellness Ritual + Eyebrow + Upper Lips for a complete beauty and relaxation package.</span>
+              </div>
+
+              <div class="offer-item">
+                <div class="offer-dot"></div>
+                <span class="offer-item-text">Premium care · Expert service · Relaxing experience in one place.</span>
+              </div>
+            </div>
+
+            <div class="offer-cta-wrap">
+              <div class="offer-only">Starting</div>
+              <div class="offer-num">₹759</div>
+              <a href="https://wa.me/919998713193?text=Hi%20Rinkal%20di!%20I%20want%20to%20book%20the%20special%20offer%20at%20Blush%20Beauty%20Parlour%20%E2%9C%A8" target="_blank" rel="noopener" class="btn-primary">Book on WhatsApp</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="sec-shell">
+        <div class="sec-inner">
+          <p class="sec-tag">About Blush</p>
+          <h2 class="sec-title">Crafted with <em>Care</em></h2>
+
+          <div class="about-grid">
+            <div class="about-text">
+              <p>Blush Beauty Parlour is a celebration of femininity. Every corner is designed to make you feel <strong>seen, valued, and utterly radiant</strong>. Our all-women team brings craft, compassion, and creativity to every appointment.</p>
+              <p>Founded by <strong>Rinkal Gadher</strong>, Blush was born from a simple belief — every woman deserves to feel her most beautiful self. With over <strong>5 years of expertise</strong> and more than <strong>1,000 happy clients</strong>, we're proud to be your beauty home.</p>
+              <p>From everyday grooming to wellness rituals, we treat every visit as a ritual — not a routine.</p>
+            </div>
+
+            <div class="stats-grid">
+              <div class="stat-box">
+                <div class="stat-num">5<sup>+</sup></div>
+                <div class="stat-lbl">Years of Excellence</div>
+                <div class="stat-sub">Serving since 2019</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-num">1k<sup>+</sup></div>
+                <div class="stat-lbl">Happy Clients</div>
+                <div class="stat-sub">Satisfied &amp; returning guests</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-num">6<sup>+</sup></div>
+                <div class="stat-lbl">Services</div>
+                <div class="stat-sub">Curated treatments</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-num">100<sup>%</sup></div>
+                <div class="stat-lbl">Women-Led</div>
+                <div class="stat-sub">A safe &amp; empowering space</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="sec-shell" style="border-top:1px solid rgba(181,86,106,.2)">
+        <div class="sec-inner">
+          <p class="sec-tag" style="text-align:center">Get In Touch</p>
+          <h2 class="sec-title" style="text-align:center">Book Your <em>Appointment</em></h2>
+
+          <div class="contact-card">
+            <div class="contact-avatar">R</div>
+            <div class="contact-name">Rinkal Gadher</div>
+            <div class="contact-role">Founder &amp; Lead Beauty Artist</div>
+
+            <a href="tel:+919998713193" class="contact-phone"><span>📞</span> +91 99987 13193</a>
+            <a href="https://wa.me/919998713193?text=Hi%20Rinkal%20di!%20I%20would%20like%20to%20book%20an%20appointment%20at%20Blush%20Beauty%20Parlour%20%F0%9F%8C%B8" target="_blank" rel="noopener" class="contact-wa"><span>💬</span> Chat on WhatsApp</a>
+
+            <a
+              class="contact-addr"
+              href="https://www.google.com/maps/search/?api=1&query=D-612,+RangSkyCity,+Tavra+Road,+Tavra,+Bharuch,+Gujarat"
+              target="_blank"
+              rel="noopener"
+            >
+              <span>📍</span>
+              <div>
+                <strong>Our Location</strong>
+                D-612, RangSkyCity, Tavra Road,<br />
+                Tavra, Bharuch, Gujarat
+              </div>
+            </a>
+
+            <div class="contact-badges">
+              <span class="badge">✦ Women Only</span>
+              <span class="badge">✦ Premium Products</span>
+              <span class="badge">✦ 5★ Experience</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <div class="foot-brand">
+          <div class="foot-logo">Blush Beauty Parlour</div>
+          <a
+            class="foot-addr"
+            href="https://www.google.com/maps/search/?api=1&query=D-612,+RangSkyCity,+Tavra+Road,+Tavra,+Bharuch,+Gujarat"
+            target="_blank"
+            rel="noopener"
+          >
+            📍 D-612, RangSkyCity, Tavra Road,<br />
+            Tavra, Bharuch, Gujarat
+          </a>
+        </div>
+
+        <div class="foot-links">
+          <a href="https://wa.me/919998713193?text=Hi%20Rinkal%20di!%20I%20would%20like%20to%20book%20an%20appointment%20at%20Blush%20Beauty%20Parlour%20%F0%9F%8C%B8" target="_blank" rel="noopener" class="foot-wa">💬 WhatsApp</a>
+          <a href="tel:+919998713193">📞 Call Us</a>
+        </div>
+
+        <div class="foot-copy">© 2025 Blush Beauty Parlour · Rinkal Gadher</div>
+      </footer>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <script>
+    const mapUrl = "https://www.google.com/maps/search/?api=1&query=D-612,+RangSkyCity,+Tavra+Road,+Tavra,+Bharuch,+Gujarat";
+
+    function tM(){
+      document.getElementById('mob').classList.toggle('open');
+      document.getElementById('ham').classList.toggle('open');
+    }
+    function cM(){
+      document.getElementById('mob').classList.remove('open');
+      document.getElementById('ham').classList.remove('open');
+    }
+
+    const cur = document.getElementById('cur');
+    const curR = document.getElementById('curR');
+    let cx = 0, cy = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => {
+      cx = e.clientX;
+      cy = e.clientY;
+      cur.style.left = cx + 'px';
+      cur.style.top = cy + 'px';
+    });
+    (function loopCursor(){
+      rx += (cx - rx) * 0.1;
+      ry += (cy - ry) * 0.1;
+      curR.style.left = rx + 'px';
+      curR.style.top = ry + 'px';
+      requestAnimationFrame(loopCursor);
+    })();
+
+    const isMob = window.innerWidth < 768;
+    const canvas = document.getElementById('c');
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      alpha:true,
+      antialias:!isMob,
+      powerPreference:isMob ? 'low-power' : 'high-performance'
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMob ? 1.5 : 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x160C14, 0.022);
+
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 300);
+    camera.position.set(0, 0, 7.2);
+
+    let mouseX = 0, mouseY = 0, targetX = 0, targetY = 0;
+    document.addEventListener('mousemove', e => {
+      mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+      mouseY = -((e.clientY / window.innerHeight) * 2 - 1);
+      targetX = mouseX;
+      targetY = mouseY;
+    });
+    document.addEventListener('touchmove', e => {
+      if (e.touches.length === 1) {
+        targetX = (e.touches[0].clientX / window.innerWidth - 0.5) * 2;
+        targetY = -(e.touches[0].clientY / window.innerHeight - 0.5) * 2;
+      }
+    }, { passive:true });
+
+    const PHASE = { ENTRY:0, TRANSITION:1, MAIN:2 };
+    let phase = PHASE.ENTRY;
+
+    /* ENTRY LIGHTS */
+    const e1 = new THREE.PointLight(0xB5566A, 8, 42);
+    e1.position.set(5, 5, 6);
+    scene.add(e1);
+
+    const e2 = new THREE.PointLight(0xC9956A, 9, 42);
+    e2.position.set(-5, -2, 7);
+    scene.add(e2);
+
+    const e3 = new THREE.PointLight(0xfff0e8, 6, 30);
+    e3.position.set(0, 2, 8);
+    scene.add(e3);
+
+    scene.add(new THREE.AmbientLight(0xfff0f5, 0.5));
+
+    /* MAIN LIGHTS */
+    const L1 = new THREE.PointLight(0xB5566A, 0, 28);
+    L1.position.set(4,4,5);
+    scene.add(L1);
+
+    const L2 = new THREE.PointLight(0xC9956A, 0, 22);
+    L2.position.set(-5,-2,4);
+    scene.add(L2);
+
+    const L3 = new THREE.PointLight(0x8C4466, 0, 18);
+    L3.position.set(0,6,-2);
+    scene.add(L3);
+
+    const L4 = new THREE.PointLight(0xfff0e8, 0, 30);
+    L4.position.set(-6,3,7);
+    scene.add(L4);
+
+    /* ENTRY OBJECT */
+    const entryGroup = new THREE.Group();
+    scene.add(entryGroup);
+
+    const solidGem = new THREE.Mesh(
+      new THREE.OctahedronGeometry(isMob ? 2.3 : 3.1, 0),
+      new THREE.MeshStandardMaterial({
+        color:0xC9956A,
+        emissive:0xB5566A,
+        emissiveIntensity:0.55,
+        roughness:0.04,
+        metalness:0.98,
+        flatShading:true
+      })
+    );
+    solidGem.position.set(0, -0.12, 0);
+    entryGroup.add(solidGem);
+
+    const gemWire = new THREE.Mesh(
+      new THREE.OctahedronGeometry(isMob ? 2.55 : 3.45, 0),
+      new THREE.MeshBasicMaterial({
+        color:0xF0C4C4,
+        wireframe:true,
+        transparent:true,
+        opacity:0.17
+      })
+    );
+    gemWire.position.copy(solidGem.position);
+    entryGroup.add(gemWire);
+
+    const haloRing = new THREE.Mesh(
+      new THREE.TorusGeometry(isMob ? 3.2 : 4.3, 0.03, 16, 120),
+      new THREE.MeshBasicMaterial({
+        color:0xC9956A,
+        transparent:true,
+        opacity:0.22
+      })
+    );
+    haloRing.rotation.x = Math.PI / 2.2;
+    haloRing.position.y = -0.12;
+    entryGroup.add(haloRing);
+
+    const glowCore = new THREE.Mesh(
+      new THREE.SphereGeometry(isMob ? 0.17 : 0.22, 24, 24),
+      new THREE.MeshStandardMaterial({
+        color:0xfff0e8,
+        emissive:0xB5566A,
+        emissiveIntensity:1.7,
+        roughness:0.05,
+        metalness:0.4
+      })
+    );
+    glowCore.position.copy(solidGem.position);
+    entryGroup.add(glowCore);
+
+    /* ENTRY DUST */
+    const dustGeo = new THREE.BufferGeometry();
+    const dustCount = isMob ? 2200 : 5000;
+    const dustPos = new Float32Array(dustCount * 3);
+    for(let i=0;i<dustCount*3;i++) dustPos[i] = (Math.random() - 0.5) * 42;
+    dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos,3));
+    const dustMat = new THREE.PointsMaterial({
+      color:0xC9956A,
+      size:isMob ? 0.028 : 0.022,
+      transparent:true,
+      opacity:0.22,
+      depthWrite:false
+    });
+    const backgroundDust = new THREE.Points(dustGeo, dustMat);
+    scene.add(backgroundDust);
+
+    /* PARTICLE BURST */
+    const burstGeo = new THREE.OctahedronGeometry(isMob ? 2.3 : 3.1, 3);
+    const burstMat = new THREE.PointsMaterial({
+      color:0xF0C4C4,
+      size:isMob ? 0.07 : 0.06,
+      transparent:true,
+      opacity:0,
+      blending:THREE.AdditiveBlending,
+      depthWrite:false
+    });
+    const count = burstGeo.attributes.position.count;
+    const vel = new Float32Array(count * 3);
+    for(let i=0;i<count;i++){
+      vel[i*3] = (Math.random() - 0.5) * 1.3;
+      vel[i*3+1] = (Math.random() - 0.5) * 1.3;
+      vel[i*3+2] = (Math.random() - 0.5) * 1.3;
+    }
+    burstGeo.setAttribute('velocity', new THREE.BufferAttribute(vel,3));
+    const burstPoints = new THREE.Points(burstGeo, burstMat);
+    burstPoints.position.copy(solidGem.position);
+    scene.add(burstPoints);
+
+    let shards = [];
+    let burstActive = false;
+
+    function createShards(){
+      const shardColors = [0xB5566A, 0xC9956A, 0xF0C4C4, 0x8C4466];
+      for(let i=0;i<90;i++){
+        const shard = new THREE.Mesh(
+          new THREE.TetrahedronGeometry(Math.random() * 0.08 + 0.035, 0),
+          new THREE.MeshStandardMaterial({
+            color:shardColors[i % shardColors.length],
+            metalness:0.95,
+            roughness:0.08,
+            emissive:0x12070d,
+            emissiveIntensity:0.35
+          })
+        );
+        shard.position.set(0, -0.12, 0);
+        shard.userData = {
+          vx:(Math.random() - 0.5) * 1.8,
+          vy:(Math.random() - 0.25) * 1.5,
+          vz:(Math.random() - 0.5) * 1.8,
+          rx:(Math.random() - 0.5) * 0.32,
+          ry:(Math.random() - 0.5) * 0.32,
+          rz:(Math.random() - 0.5) * 0.32,
+          life:1
+        };
+        scene.add(shard);
+        shards.push(shard);
+      }
+    }
+
+    /* MAIN 3D GROUP */
+    const mainGroup = new THREE.Group();
+    mainGroup.visible = false;
+    scene.add(mainGroup);
+
+    const mRose  = new THREE.MeshStandardMaterial({color:0xB5566A, metalness:.88, roughness:.12});
+    const mGold  = new THREE.MeshStandardMaterial({color:0xC9956A, metalness:.95, roughness:.04});
+    const mWine  = new THREE.MeshStandardMaterial({color:0x6B1F3A, metalness:.75, roughness:.2});
+    const mPearl = new THREE.MeshStandardMaterial({color:0xFAF0F0, metalness:.55, roughness:.25, transparent:true, opacity:.9});
+    const mMauve = new THREE.MeshStandardMaterial({color:0x8C4466, metalness:.7, roughness:.18});
+
+    const centerGroup = new THREE.Group();
+    const R = isMob ? 1.6 : 2.1;
+
+    centerGroup.add(
+      new THREE.Mesh(
+        new THREE.IcosahedronGeometry(R, 2),
+        new THREE.MeshStandardMaterial({
+          color:0xF0C4C4,
+          metalness:.35,
+          roughness:0,
+          transparent:true,
+          opacity:.14,
+          side:THREE.DoubleSide
+        })
+      )
+    );
+
+    const cGem1 = new THREE.Mesh(
+      new THREE.OctahedronGeometry(R * 0.72, 1),
+      new THREE.MeshStandardMaterial({
+        color:0xB5566A,
+        metalness:.96,
+        roughness:.01,
+        transparent:true,
+        opacity:.88
+      })
+    );
+    centerGroup.add(cGem1);
+
+    const cGem2 = new THREE.Mesh(
+      new THREE.DodecahedronGeometry(R * 0.5, 0),
+      new THREE.MeshStandardMaterial({
+        color:0xC9956A,
+        metalness:.98,
+        roughness:0,
+        transparent:true,
+        opacity:.7
+      })
+    );
+    centerGroup.add(cGem2);
+
+    const cCore = new THREE.Mesh(
+      new THREE.SphereGeometry(R * 0.22, 24, 24),
+      new THREE.MeshStandardMaterial({
+        color:0xfff0e8,
+        emissive:0xB5566A,
+        emissiveIntensity:1.5,
+        metalness:.4,
+        roughness:.05
+      })
+    );
+    centerGroup.add(cCore);
+
+    centerGroup.add(
+      new THREE.Mesh(
+        new THREE.IcosahedronGeometry(R,1),
+        new THREE.MeshBasicMaterial({
+          color:0xC9956A,
+          wireframe:true,
+          transparent:true,
+          opacity:.1
+        })
+      )
+    );
+
+    const gX = isMob ? 0 : 3.2;
+    const gY = isMob ? 1.2 : 0;
+    centerGroup.position.set(gX, gY, 0);
+    mainGroup.add(centerGroup);
+
+    function makeRing(r, tube, mat, rx, ry){
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(r, tube, 14, isMob ? 80 : 150), mat);
+      ring.rotation.x = rx;
+      ring.rotation.y = ry;
+      ring.position.set(gX, gY, 0);
+      return ring;
+    }
+
+    const ring1 = makeRing(isMob ? 2.3 : 3.0, .028, mGold, Math.PI/2, 0);
+    const ring2 = makeRing((isMob ? 2.3 : 3.0) + .32, .018, mRose, .45, Math.PI/4);
+    const ring3 = makeRing((isMob ? 2.3 : 3.0) + .64, .012, mMauve, -.65, Math.PI/3);
+    const ring4 = makeRing((isMob ? 2.3 : 3.0) + .96, .008, mPearl, .2, Math.PI/5);
+    mainGroup.add(ring1, ring2, ring3, ring4);
+    const rings = [ring1, ring2, ring3, ring4];
+
+    const floaters = [];
+    function addFloater(geo, mat, x, y, z, srx, sry, sy){
+      const m = new THREE.Mesh(geo, mat);
+      m.position.set(x,y,z);
+      m.userData = { srx, sry, sy, oy:y };
+      mainGroup.add(m);
+      floaters.push(m);
+    }
+
+    addFloater(new THREE.CylinderGeometry(.13,.15,.75,14), mWine, -4.8,1.8,-1,.009,.013,.0025);
+    addFloater(new THREE.CylinderGeometry(.055,.13,.28,14), mRose, -4.8,2.315,-1,.009,.013,.0025);
+    addFloater(new THREE.CylinderGeometry(.015,.055,.15,8), mGold, -4.8,2.53,-1,.009,.013,.0025);
+    addFloater(new THREE.BoxGeometry(.28,.65,.14), new THREE.MeshStandardMaterial({color:0xffe8f0,metalness:.2,roughness:.02,transparent:true,opacity:.22}), 5.8,-1,-2,.006,.008,.003);
+    addFloater(new THREE.CylinderGeometry(.42,.42,.065,36), mGold, -5.5,-2,-1.5,.004,.006,.002);
+
+    const mats = [mGold,mRose,mPearl,mMauve,mWine];
+    for(let i=0;i<10;i++){
+      const a = (i / 10) * Math.PI * 2;
+      const d = 5 + Math.random() * 2;
+      addFloater(
+        new THREE.OctahedronGeometry(.07 + Math.random() * .12, 0),
+        mats[i % mats.length],
+        Math.cos(a) * d,
+        (Math.random() - .5) * 5,
+        Math.sin(a) * 3 - 3,
+        (Math.random() - .5) * .022,
+        (Math.random() - .5) * .022,
+        (Math.random() - .5) * .004
+      );
+    }
+
+    const bgN = isMob ? 180 : 500;
+    const bgP = new Float32Array(bgN * 3);
+    const bgC = new Float32Array(bgN * 3);
+    const palette = [[.71,.34,.42],[.79,.58,.42],[.94,.77,.77],[.55,.26,.4],[1,.9,.9]];
+    for(let i=0;i<bgN;i++){
+      bgP[i*3] = (Math.random() - .5) * 36;
+      bgP[i*3+1] = (Math.random() - .5) * 24;
+      bgP[i*3+2] = (Math.random() - .5) * 20 - 6;
+      const pc = palette[Math.floor(Math.random() * palette.length)];
+      bgC[i*3] = pc[0];
+      bgC[i*3+1] = pc[1];
+      bgC[i*3+2] = pc[2];
+    }
+    const bgGeo = new THREE.BufferGeometry();
+    bgGeo.setAttribute('position', new THREE.BufferAttribute(bgP, 3));
+    bgGeo.setAttribute('color', new THREE.BufferAttribute(bgC, 3));
+    const bgParticles = new THREE.Points(
+      bgGeo,
+      new THREE.PointsMaterial({
+        size:.042,
+        vertexColors:true,
+        transparent:true,
+        opacity:0
+      })
+    );
+    mainGroup.add(bgParticles);
+
+    const clock = new THREE.Clock();
+
+    function animate(){
+      requestAnimationFrame(animate);
+      const t = clock.getElapsedTime();
+
+      if (phase === PHASE.ENTRY) {
+        solidGem.rotation.y = t * 0.45;
+        solidGem.rotation.x = t * 0.2;
+        solidGem.position.y = -0.12 + Math.sin(t * 2) * 0.12;
+
+        gemWire.rotation.y = -t * 0.28;
+        gemWire.rotation.x = t * 0.12;
+        gemWire.position.y = solidGem.position.y;
+
+        glowCore.position.y = solidGem.position.y;
+        haloRing.rotation.z = t * 0.2;
+        haloRing.position.y = solidGem.position.y;
+
+        e1.intensity = 8 + Math.sin(t * 1.4) * 1.2;
+        e2.intensity = 9 + Math.cos(t * 1.1) * 1.1;
+        e3.intensity = 6 + Math.sin(t * 1.8) * 0.8;
+
+        camera.position.x += (mouseX * 0.6 - camera.position.x) * 0.05;
+        camera.position.y += (mouseY * 0.35 - camera.position.y) * 0.05;
+        camera.lookAt(0, -0.12, 0);
+      }
+
+      if (burstActive) {
+        const pos = burstGeo.attributes.position;
+        const v = burstGeo.attributes.velocity;
+
+        for(let i=0;i<pos.count;i++){
+          pos.array[i*3] += v.array[i*3] * 0.06;
+          pos.array[i*3+1] += v.array[i*3+1] * 0.06;
+          pos.array[i*3+2] += v.array[i*3+2] * 0.06;
+          v.array[i*3+1] -= 0.002;
+        }
+        pos.needsUpdate = true;
+
+        shards.forEach((shard, i) => {
+          shard.position.x += shard.userData.vx * 0.06;
+          shard.position.y += shard.userData.vy * 0.06;
+          shard.position.z += shard.userData.vz * 0.06;
+          shard.rotation.x += shard.userData.rx;
+          shard.rotation.y += shard.userData.ry;
+          shard.rotation.z += shard.userData.rz;
+          shard.userData.vy -= 0.008;
+          shard.scale.multiplyScalar(0.993);
+          if (shard.scale.x < 0.02) {
+            scene.remove(shard);
+          }
+        });
+      }
+
+      if (phase === PHASE.MAIN) {
+        centerGroup.rotation.x = t * .07 + Math.sin(t * .28) * .04;
+        centerGroup.rotation.y = t * .11;
+        cGem1.rotation.y = t * .16;
+        cGem2.rotation.x = t * .2;
+        cGem2.rotation.z = t * .1;
+        cCore.material.emissiveIntensity = 1.4 + Math.sin(t * 1.6) * .5;
+
+        const gx2 = gX + Math.sin(t * .38) * .22;
+        const gy2 = gY + Math.cos(t * .32) * .16;
+        centerGroup.position.x = gx2;
+        centerGroup.position.y = gy2;
+        rings.forEach(r => {
+          r.position.x = gx2;
+          r.position.y = gy2;
+        });
+
+        ring1.rotation.z = t * .17;
+        ring2.rotation.z = -t * .11;
+        ring3.rotation.z = t * .07;
+        ring4.rotation.z = -t * .05;
+
+        floaters.forEach(f => {
+          f.rotation.x += f.userData.srx;
+          f.rotation.y += f.userData.sry;
+          f.position.y += f.userData.sy;
+          if (Math.abs(f.position.y - f.userData.oy) > 3.5) f.userData.sy *= -1;
+        });
+
+        L1.intensity = 5 + Math.sin(t * 1.3) * .9;
+        L2.intensity = 4 + Math.cos(t * .95) * .7;
+        L3.intensity = 3 + Math.sin(t * .7) * .8;
+
+        camera.position.x += (targetX * 1.8 - camera.position.x) * .04;
+        camera.position.y += (targetY * 1.0 - camera.position.y) * .04;
+        camera.lookAt(0,0,0);
+      }
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    function startTransition(){
+      if (phase !== PHASE.ENTRY) return;
+      phase = PHASE.TRANSITION;
+
+      const title = document.getElementById('entryTitle');
+      const sub = document.getElementById('entrySub');
+      const btn = document.getElementById('start-btn');
+
+      gsap.to([title, sub, btn], {
+        y:-20,
+        opacity:0,
+        duration:.45,
+        stagger:.04,
+        ease:'power2.out'
+      });
+
+      gsap.to(camera.position, {
+        z:6.5,
+        duration:.45,
+        ease:'power2.inOut'
+      });
+
+      setTimeout(() => {
+        solidGem.visible = false;
+        gemWire.visible = false;
+        haloRing.visible = false;
+        glowCore.visible = false;
+
+        burstMat.opacity = 1;
+        burstActive = true;
+        createShards();
+
+        gsap.to(burstMat, {
+          opacity:0,
+          size:0.01,
+          duration:1.8,
+          ease:'power2.out'
+        });
+
+        gsap.to(dustMat, {
+          opacity:0.08,
+          duration:1
+        });
+
+        gsap.to(camera.position, {
+          z:10.8,
+          duration:1.9,
+          ease:'power3.inOut'
+        });
+      }, 260);
+
+      setTimeout(() => {
+        document.getElementById('hero-entry').style.display = 'none';
+        document.body.classList.remove('locked');
+
+        const main = document.getElementById('main-wrap');
+        main.style.display = 'block';
+        mainGroup.visible = true;
+
+        gsap.to(main, { opacity:1, duration:1.2, ease:'power2.out' });
+        gsap.to('#pageOverlay', { opacity:1, duration:1.1 });
+        gsap.fromTo(mainGroup.scale, {x:.92,y:.92,z:.92}, {x:1,y:1,z:1,duration:1.2,ease:'back.out(1.6)'});
+
+        gsap.to(bgParticles.material, { opacity:.5, duration:1.6 });
+        gsap.to(e1, { intensity:0, duration:1.1 });
+        gsap.to(e2, { intensity:0, duration:1.1 });
+        gsap.to(e3, { intensity:0, duration:1.1 });
+        gsap.to(L1, { intensity:5, duration:1.5 });
+        gsap.to(L2, { intensity:4, duration:1.5 });
+        gsap.to(L3, { intensity:3, duration:1.5, delay:.15 });
+        gsap.to(L4, { intensity:2, duration:1.5, delay:.15 });
+        gsap.to(dustMat, { opacity:0, duration:1.2 });
+
+        phase = PHASE.MAIN;
+      }, 1750);
+    }
+
+    document.getElementById('start-btn').addEventListener('click', startTransition);
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
